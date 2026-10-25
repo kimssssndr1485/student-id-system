@@ -1,37 +1,18 @@
 <?php
-// Parent class: what every person in the system has.
 class Person
 {
-    protected string $firstName;
-    protected string $middleInitial;
-    protected string $lastName;
+    // protected: this class and its child classes (like Student) can use them
+    protected string $firstname;
+    protected string $lastname;
 
-    public function __construct(string $firstName, string $lastName, string $middleInitial = '')
+    public function __construct(string $firstname, string $lastname)
     {
-        $this->firstName     = $firstName;
-        $this->lastName      = $lastName;
-        $this->middleInitial = $middleInitial;
+        $this->firstname = $firstname;
+        $this->lastname = $lastname;
     }
 
-    public function getFirstName(): string
-    {
-        return $this->firstName;
-    }
-
-    public function getMiddleInitial(): string
-    {
-        return $this->middleInitial;
-    }
-
-    public function getLastName(): string
-    {
-        return $this->lastName;
-    }
-
-    // Example: "Sandara P. Pilas" (or "Sandara Pilas" if there is no middle initial)
-    public function getFullName(): string
-    {
-        $mi = $this->middleInitial !== '' ? ' ' . $this->middleInitial . '.' : '';
-        return $this->firstName . $mi . ' ' . $this->lastName;
+    // Example result: "Pilas, Sandara"
+    public function completeName(): string {
+        return $this->lastname .", ". $this->firstname;
     }
 }
