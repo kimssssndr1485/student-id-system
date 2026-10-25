@@ -1,50 +1,39 @@
-<?php
-defined('APP_RUNNING') or die('Access denied');
-require_once BASE_PATH . '/classes/StudentList.php';
+<main class="content">
+    <h2>Student Information</h2>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <button class="btn btn-success mb-4">Add Student</button>
 
-$list     = new StudentList();
-$students = $list->all();
-$added    = $_GET['added'] ?? '';
-$updated  = $_GET['updated'] ?? '';
-?>
-<h2>Students</h2>
-
-<?php if ($added !== ''): ?>
-    <div class="success">Student added with ID <strong><?= htmlspecialchars($added) ?></strong>.</div>
-<?php endif; ?>
-<?php if ($updated !== ''): ?>
-    <div class="success">Student <strong><?= htmlspecialchars($updated) ?></strong> was updated.</div>
-<?php endif; ?>
-
-<p>Total students: <strong><?= $list->count() ?></strong></p>
-
-<table class="data-table">
-    <thead>
-        <tr>
-            <th>Student ID</th>
-            <th>Name</th>
-            <th>Course</th>
-            <th>Year</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php if (count($students) === 0): ?>
-            <tr><td colspan="5">No students yet.</td></tr>
-        <?php endif; ?>
-
-        <?php foreach ($students as $student): ?>
-            <?php $sid = urlencode($student->getStudentId()); ?>
-            <tr>
-                <td><?= htmlspecialchars($student->getStudentId()) ?></td>
-                <td><?= htmlspecialchars($student->getFullName()) ?></td>
-                <td><?= htmlspecialchars($student->getCourse() ?: '-') ?></td>
-                <td><?= htmlspecialchars($student->getYearLabel() ?: '-') ?></td>
-                <td>
-                    <a class="btn-small" href="<?= BASE_URL ?>/index.php?page=idcard&id=<?= $sid ?>">View ID</a>
-                    <a class="btn-small" href="<?= BASE_URL ?>/index.php?page=edit&id=<?= $sid ?>">Edit</a>
-                </td>
-            </tr>
-        <?php endforeach; ?>
-    </tbody>
-</table>
+                <table class="table table-bordered table-responsive text-center">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Student Number</th>
+                            <th>Complete Name</th>
+                            <th>Course</th>
+                            <th>Year Level</th>
+                            <th>Date of Birth</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <?php foreach (StudentRepository::all() as $student) : ?>
+                        <tr>
+                            <td><?php echo $student->getIdNumber(); ?></td>
+                            <td><?php echo $student->completeName(); ?></td>
+                            <td><?php echo $student->getCourse(); ?></td>
+                            <td><?php echo $student->getYearLevel(); ?></td>
+                            <td><?php echo $student->dateOfBirth(); ?></td>
+                            <td>
+                                <a class="btn btn-success" href="index.php?page=idcard&id=<?php echo $student->getIdNumber(); ?>">View ID</a>
+                                <button class="btn btn-info">Edit</button>
+                                <button class="btn btn-danger">Delete</button>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>

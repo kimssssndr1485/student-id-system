@@ -1,7 +1,10 @@
-<nav class="navbar">
-    <span class="brand"><h2>Student ID Management System</h2></span>
-    <span class="nav-right">
-        Hello, <?= htmlspecialchars($_SESSION['username'] ?? '') ?>
-        <a href="<?= BASE_URL ?>/logout.php">Logout</a>
+<div class="topbar">
+    <span class="brand">
+        <img src="images/bcc-logo.png" alt="BCC logo" class="topbar-logo" onerror="this.style.display='none'">
+        Student ID Management System
     </span>
-</nav>
+    <span>
+        Hello, <?php echo Auth::username(); ?>
+        <a href="logout.php" class="btn btn-outline-light btn-sm ms-2">Logout</a>
+    </span>
+</div>

@@ -1,37 +1,33 @@
 <?php
-require_once __DIR__ . '/config.php';
-require_once BASE_PATH . '/classes/Auth.php';
+include 'classes/Auth.php';
 
-$auth  = new Auth();
-$error = '';
-
-// Already logged in? Go straight to the system.
-if ($auth->isLoggedIn()) {
-    header('Location: ' . BASE_URL . '/index.php');
+// Already logged in? Go to the system.
+if (Auth::check()) {
+    header('Location: index.php');
     exit;
 }
+
+$error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
     $password = $_POST['password'] ?? '';
 
-    if ($auth->login($username, $password)) {
-        header('Location: ' . BASE_URL . '/index.php');
+    if (Auth::login($username, $password)) {
+        header('Location: index.php');
         exit;
     }
     $error = 'Incorrect username or password.';
 }
-
-$pageTitle = 'Faculty Login';
-include BASE_PATH . '/components/head.php';
 ?>
+<!DOCTYPE html>
+<html lang="en">
+<?php include 'components/head.php'; ?>
 <body class="login-page">
     <div class="login-card">
 
-        <!-- Left panel: BCC description naton -->
         <div class="login-left">
-            <img src="<?= BASE_URL ?>/assets/images/bcc-logo.png" alt="BCC logo"
-                 class="login-logo" onerror="this.style.display='none'">
+            <img src="images/bcc-logo.png" alt="BCC logo" class="login-logo" onerror="this.style.display='none'">
             <h2>IRACC BCC</h2>
             <ul class="values">
                 <li>Integrity</li>
@@ -42,19 +38,18 @@ include BASE_PATH . '/components/head.php';
             </ul>
         </div>
 
-        <!-- Right panel: login form -->
         <div class="login-right">
             <h1>Student ID Management System</h1>
             <p class="subtitle">Faculty Login</p>
 
-            <?php if ($error !== ''): ?>
-                <div class="error"><?= htmlspecialchars($error) ?></div>
+            <?php if ($error !== '') : ?>
+                <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
             <?php endif; ?>
 
             <form method="POST" action="">
-                <input type="text" name="username" placeholder="Username" required autofocus>
-                <input type="password" name="password" placeholder="Password" required>
-                <button type="submit">Log In</button>
+                <input type="text" name="username" class="form-control mb-3" placeholder="Username" required autofocus>
+                <input type="password" name="password" class="form-control mb-3" placeholder="Password" required>
+                <button type="submit" class="btn btn-success w-100">Log In</button>
             </form>
         </div>
 

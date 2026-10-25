@@ -1,47 +1,39 @@
 <?php
-require_once __DIR__ . '/Person.php';
 
-// Child class: a Person who also has an ID, course, year level and photo.
+// Student is a Person, so it inherits firstname, lastname and completeName()
 class Student extends Person
 {
-    // Edit this list to change the courses shown in the forms.
-    public const COURSES = [
-        'BS in Information Systems',
-        'BS in Education',
-        'BS in Business Administration',
-    ];
-
-    public const YEAR_LEVELS = [
-        1 => '1st Year',
-        2 => '2nd Year',
-        3 => '3rd Year',
-        4 => '4th Year',
-    ];
-
-    private string $studentId;
-    private string $course;
-    private int $yearLevel;
-    private string $photo;
+    public string $id_number;
+    protected string $dob;
+    protected string $course;
+    protected string $year_level;
+    protected string $middle_initial;
 
     public function __construct(
-        string $firstName,
-        string $lastName,
-        string $studentId,
-        string $middleInitial = '',
-        string $course = '',
-        int $yearLevel = 0,
-        string $photo = ''
+        string $id_number,
+        string $firstname,
+        string $lastname,
+        string $dob,
+        string $course,
+        string $year_level,
+        string $middle_initial = ''
     ) {
-        parent::__construct($firstName, $lastName, $middleInitial);
-        $this->studentId = $studentId;
-        $this->course    = $course;
-        $this->yearLevel = $yearLevel;
-        $this->photo     = $photo;
+        $this->id_number = $id_number;
+        $this->dob = $dob;
+        $this->course = $course;
+        $this->year_level = $year_level;
+        $this->middle_initial = $middle_initial;
+        parent::__construct($firstname, $lastname); // sets the Person part
     }
 
-    public function getStudentId(): string
+    public function getIdNumber(): string
     {
-        return $this->studentId;
+        return $this->id_number;
+    }
+
+    public function dateOfBirth(): string
+    {
+        return date('F d Y', strtotime($this->dob));
     }
 
     public function getCourse(): string
@@ -49,46 +41,29 @@ class Student extends Person
         return $this->course;
     }
 
-    public function getYearLevel(): int
+    public function getYearLevel(): string
     {
-        return $this->yearLevel;
+        return $this->year_level;
     }
 
-    public function getYearLabel(): string
+    // Name as shown on the ID card: "Sandara P. Pilas" (First MI Last)
+    public function idCardName(): string
     {
-        return self::YEAR_LEVELS[$this->yearLevel] ?? '';
+        $mi = $this->middle_initial !== '' ? ' ' . $this->middle_initial . '.' : '';
+        return $this->firstname . $mi . ' ' . $this->lastname;
     }
 
-    public function getPhoto(): string
-    {
-        return $this->photo;
-    }
-
-    // Turn the object into an array so it can be saved as JSON.
-    public function toArray(): array
-    {
-        return [
-            'studentId'     => $this->studentId,
-            'firstName'     => $this->firstName,
-            'middleInitial' => $this->middleInitial,
-            'lastName'      => $this->lastName,
-            'course'        => $this->course,
-            'yearLevel'     => $this->yearLevel,
-            'photo'         => $this->photo,
-        ];
-    }
-
-    // Build a Student object from a saved array (old records without the new fields still work).
-    public static function fromArray(array $row): Student
+    // Builds a Student from one row of the array in StudentRepository
+    public static function fromArray(array $s): Student
     {
         return new Student(
-            $row['firstName'],
-            $row['lastName'],
-            $row['studentId'],
-            $row['middleInitial'] ?? '',
-            $row['course'] ?? '',
-            (int) ($row['yearLevel'] ?? 0),
-            $row['photo'] ?? ''
+            $s['student_number'],
+            $s['firstname'],
+            $s['lastname'],
+            $s['date_of_birth'],
+            $s['course'],
+            $s['year_level'],
+            $s['middle_initial']
         );
     }
 }
