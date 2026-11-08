@@ -1,5 +1,8 @@
+<?php ob_start(); ?>
 <?php include 'classes/Auth.php'; ?>
 <?php Auth::requireLogin(); ?>
+
+<?php include 'config/config.php'; ?>
 
 <?php include 'classes/Page.php'; ?>
 <?php include 'classes/Person.php'; ?>

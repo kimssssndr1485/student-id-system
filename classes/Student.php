@@ -3,6 +3,15 @@
 // Student is a Person, so it inherits firstname, lastname and completeName()
 class Student extends Person
 {
+    // The choices shown in the form dropdowns
+    public const COURSES = [
+        'BS in Information Systems',
+        'BS in Education',
+        'BS in Business Administration'
+    ];
+
+    public const YEAR_LEVELS = ['1st Year', '2nd Year', '3rd Year', '4th Year'];
+
     public string $id_number;
     protected string $dob;
     protected string $course;
@@ -53,7 +62,7 @@ class Student extends Person
         return $this->firstname . $mi . ' ' . $this->lastname;
     }
 
-    // Builds a Student from one row of the array in StudentRepository
+    // Builds a Student from one row of the database
     public static function fromArray(array $s): Student
     {
         return new Student(
@@ -65,5 +74,28 @@ class Student extends Person
             $s['year_level'],
             $s['middle_initial']
         );
+    }
+
+    // Checks the form data. Returns an error message, or '' if everything is fine.
+    public static function validate(array $d): string
+    {
+        foreach (['student_number', 'firstname', 'lastname', 'date_of_birth', 'course', 'year_level'] as $field) {
+            if ($d[$field] === '') {
+                return 'Please fill in all required fields.';
+            }
+        }
+        if ($d['middle_initial'] !== '' && !preg_match('/^[A-Z]$/', $d['middle_initial'])) {
+            return 'Middle initial must be one letter.';
+        }
+        if (strtotime($d['date_of_birth']) === false) {
+            return 'Please enter a valid date of birth.';
+        }
+        if (!in_array($d['course'], self::COURSES, true)) {
+            return 'Please choose a valid course.';
+        }
+        if (!in_array($d['year_level'], self::YEAR_LEVELS, true)) {
+            return 'Please choose a valid year level.';
+        }
+        return '';
     }
 }

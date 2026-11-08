@@ -9,6 +9,15 @@ class Page
             case 'students':
                 include 'modules/student_display.php';
                 break;
+            case 'add':
+                include 'modules/student_add.php';
+                break;
+            case 'edit':
+                include 'modules/student_edit.php';
+                break;
+            case 'search':
+                include 'modules/student_search.php';
+                break;
             case 'idcard':
                 include 'modules/id_card.php';
                 break;
