@@ -1,6 +1,6 @@
 <div class="row">
     <div class="col-lg-6">
-        <form method="POST" action="">
+        <form method="POST" action="<?php echo $formAction ?? ''; ?>">
 
             <label class="form-label">ID Number</label>
             <input type="text" name="student_number" class="form-control mb-3"

@@ -6,6 +6,8 @@
         <div class="alert alert-success">Student added successfully.</div>
     <?php elseif ($msg === 'updated') : ?>
         <div class="alert alert-success">Student updated successfully.</div>
+    <?php elseif ($msg === 'deleted') : ?>
+        <div class="alert alert-success">Student deleted successfully.</div>
     <?php endif; ?>
 
     <div class="container">
@@ -33,9 +35,9 @@
                             <td><?php echo $student->getYearLevel(); ?></td>
                             <td><?php echo $student->dateOfBirth(); ?></td>
                             <td>
-                                <a class="btn btn-success" href="index.php?page=idcard&id=<?php echo $student->getIdNumber(); ?>">View ID</a>
+                                <a class="btn btn-success" href="index.php?page=idcard&id=<?php echo $student->getIdNumber(); ?>">ID Card</a>
                                 <a class="btn btn-info" href="index.php?page=edit&id=<?php echo $student->getIdNumber(); ?>">Edit</a>
-                                <button class="btn btn-danger">Delete</button>
+                                <button class="btn btn-danger" onclick="deleteData('<?php echo $student->getIdNumber(); ?>')">Delete</button>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -45,3 +47,11 @@
         </div>
     </div>
 </main>
+
+<script>
+function deleteData(id) {
+    if (confirm('Do you want to delete data?')) {
+        window.location = "modules/student_delete.php?id=" + id;
+    }
+}
+</script>

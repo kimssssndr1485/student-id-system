@@ -23,6 +23,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'course'         => trim($_POST['course'] ?? ''),
         'year_level'     => trim($_POST['year_level'] ?? '')
     ];
+    //trim remove specific characters like dot or dashes
+    //stroupper converts asc2 letter  a-z (mb_stroupper() kung may enye or latin letters)
 
     $error = Student::validate($formData); // empty text means no problem
 

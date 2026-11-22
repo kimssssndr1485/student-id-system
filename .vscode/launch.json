@@ -10,6 +10,7 @@
             "name": "Launch Chrome against localhost",
             "url": "http://localhost/student-id-system/login.php",
             "webRoot": "${C:\\xampp\\htdocs\\student-id-system}"
+
         }
     ]
 }
