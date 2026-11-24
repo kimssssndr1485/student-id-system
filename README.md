@@ -1,6 +1,6 @@
 # Student ID Management System
 
-IM / OOP / WebDev / Data Structures project (PHP).
+IM / OOP / WebDev / Data Structure project (PHP).
 
 ## Run locally
 1. Put this folder in XAMPP's htdocs and start Apache.
