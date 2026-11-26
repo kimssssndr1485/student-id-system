@@ -32,7 +32,9 @@
                         <a class="btn btn-success btn-sm" href="index.php?page=idcard&id=<?php echo $s->getIdNumber(); ?>">ID Card</a>
                         <a class="btn btn-info btn-sm" href="index.php?page=edit&id=<?php echo $s->getIdNumber(); ?>">Edit</a>
                         <a class="btn btn-outline-dark btn-sm" href="modules/student_status.php?id=<?php echo $s->getIdNumber(); ?>&status=<?php echo $next; ?>">Mark <?php echo $next; ?></a>
-                        <button class="btn btn-danger btn-sm btn-delete" data-id="<?php echo $s->getIdNumber(); ?>">Delete</button>
+                        <a class="btn btn-danger btn-sm"
+                            href="modules/student_delete.php?id=<?php echo urlencode($s->getIdNumber()); ?>"
+                            onclick="return confirm('Do you want to delete this student?');">Delete</a>
                     </td>
                 </tr>
             <?php endforeach; ?>
