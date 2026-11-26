@@ -1,7 +1,6 @@
 <?php
-class Person
+abstract class Person
 {
-    // protected: this class and its child classes (like Student) can use them
     protected string $firstname;
     protected string $lastname;
 
@@ -11,8 +10,12 @@ class Person
         $this->lastname = $lastname;
     }
 
-    // Example result: "Pilas, Sandara"
-    public function completeName(): string {
-        return $this->lastname .", ". $this->firstname;
+    // Concrete method reused by child classes
+    public function completeName(): string
+    {
+        return $this->lastname . ', ' . $this->firstname;
     }
+
+    // Abstract method implemented by each child class
+    abstract public function roleLabel(): string;
 }

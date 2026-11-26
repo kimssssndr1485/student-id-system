@@ -1,36 +1,28 @@
-<?php include '../config/config.php'; ?>
-<?php include '../classes/Auth.php'; ?>
-<?php include '../classes/Person.php'; ?>
-<?php include '../classes/Student.php'; ?>
-
-<?php include '../repositories/IStudentRepository.php'; ?>
-<?php include '../repositories/DBRepository.php'; ?>
-<?php include '../repositories/StudentRepository.php'; ?>
-
 <?php
-// Only a logged-in user, and only from the form (not by typing the address)
+include '../config/config.php';
+include '../classes/Auth.php';
+include '../classes/Person.php';
+include '../classes/Student.php';
+include '../classes/Validator.php';
+include '../repositories/IStudentRepository.php';
+include '../repositories/DBRepository.php';
+include '../repositories/StudentRepository.php';
+
 if (!Auth::check() || $_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: ../index.php?page=students');
     exit;
 }
 
-    $id             = $_GET['id'];
-    $student_number = $_POST['student_number'];
-    $firstname      = $_POST['firstname'];
-    $middle_initial = $_POST['middle_initial'];
-    $lastname       = $_POST['lastname'];
-    $date_of_birth  = $_POST['date_of_birth'];
-    $course         = $_POST['course'];
-    $year_level     = $_POST['year_level'];
+$id = $_GET['id'] ?? '';
+$data = Validator::cleanStudent($_POST);
+$error = Validator::validateStudent($data);
 
-StudentRepository::update([
-    'student_number' => $student_number,
-    'firstname'      => $firstname,
-    'middle_initial' => $middle_initial,
-    'lastname'       => $lastname,
-    'date_of_birth'  => $date_of_birth,
-    'course'         => $course,
-    'year_level'     => $year_level,
-], $id);
+if ($error !== '') {
+    die($error . ' <a href="../index.php?page=edit&id=' . htmlspecialchars($id) . '">Go Back</a>');
+}
 
-header('Location: ../index.php?page=students&msg=updated');
+if (StudentRepository::update($data, $id)) {
+    header('Location: ../index.php?page=students&msg=updated');
+    exit;
+}
+die('That ID number already exists. <a href="../index.php?page=edit&id=' . htmlspecialchars($id) . '">Go Back</a>');

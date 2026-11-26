@@ -1,6 +1,6 @@
 <div class="topbar">
     <span class="brand">
-        <img src="images/bcc-logo.png" alt="BCC logo" class="topbar-logo" onerror="this.style.display='none'">
+        <img src="images/bcc-logo.png" alt="BCC logo" class="topbar-logo">
         Student ID Management System
     </span>
     <span>

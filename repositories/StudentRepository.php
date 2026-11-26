@@ -1,62 +1,88 @@
 <?php
-
 class StudentRepository extends DBRepository implements IStudentRepository
 {
-    // Returns a list of Student objects from the database
+    private static function mapRows(mysqli_result|bool $res): array
+    {
+        $list = [];
+        while ($res && ($row = $res->fetch_assoc())) {
+            $list[] = Student::fromArray($row);
+        }
+        return $list;
+    }
+
     public static function all(): array
     {
-        $stmt = self::connect()->query('SELECT * FROM students ORDER BY student_number');
-//prepackages and safety locked SQL
-
-        $result = [];
-        foreach ($stmt->fetchAll() as $s) {
-            $result[] = Student::fromArray($s);
-        }
-        return $result;
+        $sql = 'SELECT s.*, c.name AS course_name FROM students s
+                INNER JOIN courses c ON s.course_id = c.id
+                ORDER BY s.created_at DESC, s.id DESC';
+        return self::mapRows(self::connect()->query($sql));
     }
 
-    // Returns the data of ONE student (by student number), or an empty array if not found
+    public static function search(string $q): array
+    {
+        $like = '%' . $q . '%';
+        $stmt = self::connect()->prepare(
+            'SELECT s.*, c.name AS course_name FROM students s
+             INNER JOIN courses c ON s.course_id = c.id
+             WHERE s.student_number LIKE ? OR s.firstname LIKE ? OR s.lastname LIKE ? OR c.name LIKE ?
+             ORDER BY s.created_at DESC, s.id DESC'
+        );
+        $stmt->bind_param('ssss', $like, $like, $like, $like);
+        $stmt->execute();
+        return self::mapRows($stmt->get_result());
+    }
+
     public static function find(string $id): array
     {
-        $stmt = self::connect()->prepare('SELECT * FROM students WHERE student_number = :id');
-        $stmt->execute(['id' => $id]);
-
-        $row = $stmt->fetch();
-        return $row ?: [];
+        $stmt = self::connect()->prepare(
+            'SELECT s.*, c.name AS course_name FROM students s
+             INNER JOIN courses c ON s.course_id = c.id WHERE s.student_number = ?'
+        );
+        $stmt->bind_param('s', $id);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_assoc() ?: [];
     }
 
-    // ADD: saves a new student in the database
-    public static function create(array $data): void
+    public static function create(array $d): bool
     {
-        $sql = 'INSERT INTO students
-                    (student_number, firstname, middle_initial, lastname, date_of_birth, course, year_level)
-                VALUES
-                    (:student_number, :firstname, :middle_initial, :lastname, :date_of_birth, :course, :year_level)';
-
-        // $data has the same keys as the :placeholders above
-        self::connect()->prepare($sql)->execute($data);
+        $stmt = self::connect()->prepare(
+            'INSERT INTO students (student_number, firstname, middle_initial, lastname, date_of_birth, course_id, year_level, id_status)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
+        );
+        $cid = (int) $d['course_id'];
+        $stmt->bind_param('sssssiss', $d['student_number'], $d['firstname'], $d['middle_initial'], $d['lastname'], $d['date_of_birth'], $cid, $d['year_level'], $d['id_status']);
+        return $stmt->execute();
     }
 
-    // EDIT: changes the student whose student number is $id, then returns the updated data
-    public static function update(array $data, string $id): array
+    public static function update(array $d, string $id): bool
     {
-        $sql = 'UPDATE students SET
-                    student_number = :student_number, firstname = :firstname,
-                    middle_initial = :middle_initial, lastname = :lastname,
-                    date_of_birth = :date_of_birth, course = :course, year_level = :year_level
-                WHERE student_number = :id';
-
-        $data['id'] = $id;
-        self::connect()->prepare($sql)->execute($data);
-        return self::find($data['student_number']);
+        $stmt = self::connect()->prepare(
+            'UPDATE students SET student_number=?, firstname=?, middle_initial=?, lastname=?, date_of_birth=?, course_id=?, year_level=?, id_status=? WHERE student_number=?'
+        );
+        $cid = (int) $d['course_id'];
+        $stmt->bind_param('sssssisss', $d['student_number'], $d['firstname'], $d['middle_initial'], $d['lastname'], $d['date_of_birth'], $cid, $d['year_level'], $d['id_status'], $id);
+        return $stmt->execute();
     }
 
-    // DELETE: removes the student with this student number
+    public static function updateStatus(string $id, string $status): void
+    {
+        $stmt = self::connect()->prepare('UPDATE students SET id_status = ? WHERE student_number = ?');
+        $stmt->bind_param('ss', $status, $id);
+        $stmt->execute();
+    }
+
     public static function delete(string $id): void
     {
-        $stmt = self::connect()->prepare('DELETE FROM students WHERE student_number = :id');
-        $stmt->execute(['id' => $id]);
+        $stmt = self::connect()->prepare('DELETE FROM students WHERE student_number = ?');
+        $stmt->bind_param('s', $id);
+        $stmt->execute();
+    }
 
-        //:: go directly inside a class
+    public static function countByStatus(string $status): int
+    {
+        $stmt = self::connect()->prepare('SELECT COUNT(*) AS total FROM students WHERE id_status = ?');
+        $stmt->bind_param('s', $status);
+        $stmt->execute();
+        return (int) ($stmt->get_result()->fetch_assoc()['total'] ?? 0);
     }
 }

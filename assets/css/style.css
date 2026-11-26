@@ -167,6 +167,49 @@ body {
 .id-card-barcode { display: flex; justify-content: center; padding: 1mm 3mm 2mm; }
 .id-card-barcode svg { max-width: 100%; height: auto; }
 
+/* ---------- Back of ID card ---------- */
+.id-card-back {
+    padding: 14px;
+    justify-content: space-between;
+}
+.id-back-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+.id-back-text {
+    font-size: 0.7rem;
+    margin-bottom: 4px;
+}
+.id-back-note {
+    font-size: 0.65rem;
+    color: #555;
+    margin-bottom: 0;
+}
+.id-back-sign {
+    border-top: 1px solid #333;
+    padding-top: 4px;
+    text-align: center;
+    font-size: 0.65rem;
+}
+
+/* ---------- Forms & tables ---------- */
+.student-form,
+.search-form {
+    max-width: 500px;
+}
+.dept-table {
+    max-width: 550px;
+}
+.table th,
+.table td {
+    text-align: center;
+    vertical-align: middle;
+}
+.table td:last-child {
+    white-space: nowrap;
+}
+
 /* ---------- Print: only the ID card ---------- */
 @media print {
     .topbar, .sidebar, .no-print, h2 { display: none !important; }
